@@ -1,0 +1,21 @@
+name: Comment on failure
+
+on:
+  workflow_run:
+    workflows: ["PR Test"]
+    types:
+      - completed
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+
+    steps:
+      - name: Create comment
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          issue-number: ${{ github.event.workflow_run.pull_requests[0].number }}
+          body: |
+            This is a test comment.
+            It will be updated if it already exists.

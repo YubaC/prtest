@@ -1,7 +1,8 @@
 name: PR Test
 
 on:
-  pull_request_target:
+  # pull_request_target:
+  pull_request:
     types:
       - opened
       - synchronize
@@ -22,11 +23,21 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Create comment
-        uses: peter-evans/create-or-update-comment@v3
-        with:
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            This is a test comment.
-            It will be updated if it already exists.
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      # - name: Create comment
+      #   if: ${{ failure() }}
+      #   uses: peter-evans/create-or-update-comment@v3
+      #   with:
+      #     issue-number: ${{ github.event.pull_request.number }}
+      #     body: |
+      #       This is a test comment.
+      #       It will be updated if it already exists.
