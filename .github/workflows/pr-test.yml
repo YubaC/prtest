@@ -1,33 +1,48 @@
 name: PR Test
 
 on:
-  pull_request:
-    branches: [ main ]
-    types: [ opened, synchronize, reopened, ready_for_review, labeled ]
+  pull_request_target:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - edited
+      - closed
+      - ready_for_review
+      - labeled
+      - unlabeled
+      - review_requested
+      - review_request_removed
+      - assigned
+      - unassigned
+      - locked
+      - unlocked
+      - converted_to_draft
+      - ready_for_review
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Run tests
-      run: npm test
+      - name: Run tests
+        run: npm test
 
-    - name: Comment PR
-      if: ${{ failure() }}
-      uses: actions/github-script@v4
-      with:
-        script: |
-          const issue_number = context.issue.number;
-          const message = 'Tests failed, please check your code.';
-          github.rest.issues.createComment({
-            issue_number: issue_number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: message
-          });
+      - name: Comment PR
+        if: ${{ failure() }}
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const issue_number = context.issue.number;
+            const message = 'Tests failed, please check your code.';
+            github.rest.issues.createComment({
+              issue_number: issue_number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: message
+            });
