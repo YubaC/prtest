@@ -18,7 +18,6 @@ on:
       - locked
       - unlocked
       - converted_to_draft
-      - ready_for_review
 
 jobs:
   test:
