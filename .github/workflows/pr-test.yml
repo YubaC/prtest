@@ -32,16 +32,10 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - name: Comment PR
-        if: ${{ failure() }}
-        uses: actions/github-script@v4
+      - name: Create comment
+        uses: peter-evans/create-or-update-comment@v3
         with:
-          script: |
-            const issue_number = context.issue.number;
-            const message = 'Tests failed, please check your code.';
-            github.rest.issues.createComment({
-              issue_number: issue_number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: message
-            });
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            This is a test comment.
+            It will be updated if it already exists.
